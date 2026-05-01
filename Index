@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Gadai Sederhana</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; }
+        .label { font-weight: bold; width: 40%; }
+        input[type="number"], select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .radio-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .readonly-bg { background-color: #eeeeee; }
+        .required { color: red; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Form Perhitungan</h2>
+    <table>
+        <!-- Jenis Barang -->
+        <tr>
+            <td class="label">Jenis Barang <span class="required">*</span></td>
+            <td>
+                <select id="jenisBarang" onchange="hitungSemua()">
+                    <option value="lainnya">Lainnya</option>
+                    <option value="motor">Motor</option>
+                    <option value="mobil">Mobil</option>
+                    
+                </select>
+            </td>
+        </tr>
+
+        <!-- Pencairan -->
+        <tr>
+            <td class="label">Pencairan (Rp) <span class="required">*</span></td>
+            <td><input type="number" id="pencairan" placeholder="Masukkan angka" oninput="hitungSemua()"></td>
+        </tr>
+
+        <!-- Bunga -->
+        <tr>
+            <td class="label">Bunga <span class="required">*</span></td>
+            <td>
+                <div class="radio-group">
+                    <label><input type="radio" name="bungaOpt" value="0.10" onclick="toggleBungaLain(false)" checked > 10%</label>
+                    <label><input type="radio" name="bungaOpt" value="0.05" onclick="toggleBungaLain(false)" > 5%</label>
+                    <label><input type="radio" name="bungaOpt" value="lainnya" id="radioBungaLain" onclick="toggleBungaLain(true)"> Lainnya:</label>
+                    <input type="number" id="bungaPersenLain" style="width: 60px;" placeholder="%" oninput="hitungSemua()" disabled>
+                </div>
+                <div style="margin-top:5px;">
+                    Hasil: <input type="text" id="hasilBunga" class="readonly-bg" readonly>
+                </div>
+            </td>
+        </tr>
+
+        <!-- Admin -->
+        <tr>
+            <td class="label">Admin</td>
+            <td><input type="text" id="admin" class="readonly-bg" readonly></td>
+        </tr>
+
+        <!-- Biaya Penyimpanan -->
+        <tr>
+            <td class="label">Biaya Penyimpanan</td>
+            <td><input type="text" id="biayaSimpan" class="readonly-bg" readonly></td>
+        </tr>
+
+        <!-- Tanggal Hari Ini -->
+        <tr>
+            <td class="label">Tanggal Hari Ini <span class="required">*</span></td>
+            <td><input type="text" id="tglHariIni" class="readonly-bg" readonly></td>
+        </tr>
+
+        <!-- Pilihan Jatuh Tempo -->
+        <tr>
+            <td class="label">Pilihan Jatuh Tempo <span class="required">*</span></td>
+            <td>
+                <div class="radio-group">
+                    <label><input type="radio" name="tenor" value="1m" onclick="hitungSemua()" checked> 1 Bulan</label>
+                    <label><input type="radio" name="tenor" value="14d" onclick="hitungSemua()"> 2 Minggu/14 Hari</label>
+                </div>
+            </td>
+        </tr>
+
+        <!-- Tanggal Jatuh Tempo -->
+        <tr>
+            <td class="label">Tanggal Jatuh Tempo</td>
+            <td><input type="text" id="tglJatuhTempo" class="readonly-bg" readonly></td>
+        </tr>
+
+        <!-- Tanggal Lelang -->
+        <tr>
+            <td class="label">Tanggal Lelang</td>
+            <td><input type="text" id="tglLelang" class="readonly-bg" readonly></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    // Inisialisasi Tanggal Hari Ini
+    const hariIni = new Date();
+    document.getElementById('tglHariIni').value = formatTanggal(hariIni);
+
+    function formatTanggal(date) {
+        let d = date.getDate().toString().padStart(2, '0');
+        let m = (date.getMonth() + 1).toString().padStart(2, '0');
+        let y = date.getFullYear();
+        return `${d}/${m}/${y}`;
+    }
+
+    function toggleBungaLain(show) {
+        document.getElementById('bungaPersenLain').disabled = !show;
+        hitungSemua();
+    }
+
+    function hitungSemua() {
+        // 1. Ambil Nilai Input
+        let pencairan = parseFloat(document.getElementById('pencairan').value) || 0;
+        let jenis = document.getElementById('jenisBarang').value;
+        let tenor = document.querySelector('input[name="tenor"]:checked').value;
+        
+        // 2. Hitung Bunga & Admin
+        let bungaPersen = 0;
+        let radioBunga = document.querySelector('input[name="bungaOpt"]:checked').value;
+        
+        if (radioBunga === "lainnya") {
+            bungaPersen = (parseFloat(document.getElementById('bungaPersenLain').value) || 0) / 100;
+        } else {
+            bungaPersen = parseFloat(radioBunga);
+        }
+
+        let totalBunga = pencairan * bungaPersen;
+        document.getElementById('hasilBunga').value = totalBunga.toLocaleString('id-ID');
+
+        // Logika Admin
+        let biayaAdmin = 0;
+        if (radioBunga === "0.05") {
+            biayaAdmin = pencairan * 0.01;
+        } else if (radioBunga === "0.10") {
+            biayaAdmin = pencairan * 0.02;
+        }
+        document.getElementById('admin').value = biayaAdmin.toLocaleString('id-ID');
+
+        // 3. Biaya Penyimpanan
+        let biayaSimpan = 0;
+        if (jenis === "motor") {
+            biayaSimpan = 100000;
+        } else if (jenis === "mobil") {
+            if (tenor === "14d") {
+                biayaSimpan = 100000;
+            } else {
+                biayaSimpan = 200000;
+            }
+        }
+        document.getElementById('biayaSimpan').value = biayaSimpan.toLocaleString('id-ID');
+
+        // 4. Hitung Tanggal Jatuh Tempo & Lelang
+        let tglJT = new Date(hariIni);
+        let tglLelang = new Date(hariIni);
+
+        if (tenor === "1m") {
+            tglJT.setMonth(tglJT.getMonth() + 1);
+            // Lelang 7 hari setelah JT
+            tglLelang = new Date(tglJT);
+            tglLelang.setDate(tglLelang.getDate() + 7);
+        } else {
+            tglJT.setDate(tglJT.getDate() + 14);
+            // Lelang 3 hari setelah JT
+            tglLelang = new Date(tglJT);
+            tglLelang.setDate(tglLelang.getDate() + 3);
+        }
+
+        document.getElementById('tglJatuhTempo').value = formatTanggal(tglJT);
+        document.getElementById('tglLelang').value = formatTanggal(tglLelang);
+    }
+
+    // Jalankan hitung pertama kali
+    hitungSemua();
+</script>
+
+</body>
+</html>
