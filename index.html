@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Gadai Sederhana</title>
+    <title>Kalkulator Gadai</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
-        .container { max-width: 650px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #fdddea; }
+        .container { max-width: 600px; background: rgb(243, 200, 245); padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         table { width: 100%; border-collapse: collapse; }
-        td { padding: 12px 8px; border-bottom: 1px solid #ddd; }
-        .label { font-weight: bold; width: 35%; }
-        input[type="number"], input[type="text"], select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        td { padding: 10px; border-bottom: 1px solid #c5eeca; }
+        .label { font-weight: bold; width: 40%; }
+        input[type="number"], select { width: 100%; padding: 8px; box-sizing: border-box; }
         .radio-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .readonly-bg { background-color: #eeeeee; cursor: not-allowed; }
+        .readonly-bg { background-color: #f1dffd; }
         .required { color: red; }
-        
-        /* Style Tombol Salin */
         .copy-btn {
             padding: 8px 12px;
-            background-color: #007bff;
+            background-color: #f47eff;
             color: white;
             border: none;
             border-radius: 4px;
@@ -26,16 +24,16 @@
             font-size: 12px;
             white-space: nowrap;
         }
-        .copy-btn:hover { background-color: #0056b3; }
-        .copy-btn:active { background-color: #004085; }
+        .copy-btn:hover { background-color: #c10ac7; }
+        .copy-btn:active { background-color: #c10ac7; }
         .input-wrapper { display: flex; gap: 5px; align-items: center; }
     </style>
 </head>
-<body>
+<body >
 
 <div class="container">
-    <h2>Form Perhitungan</h2>
-    <table>
+    <h2 style="text-align: center;"  > 🌷˚ʚ💗 KAKULATOR GADAI 💗ɞ˚ 🌷 </h2>
+    <table >
         <!-- Jenis Barang -->
         <tr>
             <td class="label">Jenis Barang <span class="required">*</span></td>
@@ -44,6 +42,7 @@
                     <option value="lainnya">Lainnya</option>
                     <option value="motor">Motor</option>
                     <option value="mobil">Mobil</option>
+                    
                 </select>
             </td>
         </tr>
@@ -64,8 +63,8 @@
                     <label><input type="radio" name="bungaOpt" value="lainnya" id="radioBungaLain" onclick="toggleBungaLain(true)"> Lainnya:</label>
                     <input type="number" id="bungaPersenLain" style="width: 60px;" placeholder="%" oninput="hitungSemua()" disabled>
                 </div>
-                <div class="input-wrapper" style="margin-top:5px;">
-                    <input type="text" id="hasilBunga" class="readonly-bg" readonly placeholder="Hasil Bunga">
+                <div style="margin-top:5px;">
+                    Hasil: <input type="text" id="hasilBunga" class="readonly-bg" readonly>
                     <button class="copy-btn" onclick="copyToClipboard('hasilBunga')">Copy</button>
                 </div>
             </td>
@@ -74,48 +73,52 @@
         <!-- Admin -->
         <tr>
             <td class="label">Admin</td>
-            <td>
-                <div class="input-wrapper">
-                    <input type="text" id="admin" class="readonly-bg" readonly>
-                    <button class="copy-btn" onclick="copyToClipboard('admin')">Copy</button>
-                </div>
+            <td><input type="text" id="admin" class="readonly-bg" readonly>
+                <button class="copy-btn" onclick="copyToClipboard('admin')">Copy</button>
             </td>
+            
         </tr>
 
         <!-- Biaya Penyimpanan -->
         <tr>
             <td class="label">Biaya Penyimpanan</td>
+            <td><input type="text" id="biayaSimpan" class="readonly-bg" readonly>
+                <button class="copy-btn" onclick="copyToClipboard('biayaSimpan')">Copy</button>
+            </td>
+           
+        </tr>
+
+        <!-- Tanggal Hari Ini -->
+        <tr>
+            <td class="label">Tanggal Hari Ini <span class="required">*</span></td>
+            <td><input type="text" id="tglHariIni" class="readonly-bg" readonly></td>
+        </tr>
+
+        <!-- Pilihan Jatuh Tempo -->
+        <tr>
+            <td class="label">Pilihan Jatuh Tempo <span class="required">*</span></td>
             <td>
-                <div class="input-wrapper">
-                    <input type="text" id="biayaSimpan" class="readonly-bg" readonly>
-                    <button class="copy-btn" onclick="copyToClipboard('biayaSimpan')">Copy</button>
+                <div class="radio-group">
+                    <label><input type="radio" name="tenor" value="1m" onclick="hitungSemua()" checked> 1 Bulan</label>
+                    <label><input type="radio" name="tenor" value="14d" onclick="hitungSemua()"> 2 Minggu/14 Hari</label>
                 </div>
             </td>
         </tr>
 
         <!-- Tanggal Jatuh Tempo -->
         <tr>
-            <td class="label">Jatuh Tempo</td>
-            <td>
-                <div class="radio-group" style="margin-bottom: 8px;">
-                    <label><input type="radio" name="tenor" value="1m" onclick="hitungSemua()" checked> 1 Bulan</label>
-                    <label><input type="radio" name="tenor" value="14d" onclick="hitungSemua()"> 14 Hari</label>
-                </div>
-                <div class="input-wrapper">
-                    <input type="text" id="tglJatuhTempo" class="readonly-bg" readonly>
-                    <button class="copy-btn" onclick="copyToClipboard('tglJatuhTempo')">Copy</button>
-                </div>
+            <td class="label">Tanggal Jatuh Tempo</td>
+            <td><input type="text" id="tglJatuhTempo" class="readonly-bg" readonly>
+                <button class="copy-btn" onclick="copyToClipboard('tglJatuhTempo')">Copy</button>
             </td>
+            
         </tr>
 
         <!-- Tanggal Lelang -->
         <tr>
             <td class="label">Tanggal Lelang</td>
-            <td>
-                <div class="input-wrapper">
-                    <input type="text" id="tglLelang" class="readonly-bg" readonly>
-                    <button class="copy-btn" onclick="copyToClipboard('tglLelang')">Copy</button>
-                </div>
+            <td><input type="text" id="tglLelang" class="readonly-bg" readonly>
+                <button class="copy-btn" onclick="copyToClipboard('tglLelang')">Copy</button>
             </td>
         </tr>
     </table>
@@ -123,6 +126,7 @@
 
 <script>
     const hariIni = new Date();
+    document.getElementById('tglHariIni').value = formatTanggal(hariIni);
 
     function formatTanggal(date) {
         let d = date.getDate().toString().padStart(2, '0');
