@@ -6,14 +6,29 @@
     <title>Kalkulator Gadai Sederhana</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
-        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .container { max-width: 650px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
         table { width: 100%; border-collapse: collapse; }
-        td { padding: 10px; border-bottom: 1px solid #ddd; }
-        .label { font-weight: bold; width: 40%; }
-        input[type="number"], select { width: 100%; padding: 8px; box-sizing: border-box; }
+        td { padding: 12px 8px; border-bottom: 1px solid #ddd; }
+        .label { font-weight: bold; width: 35%; }
+        input[type="number"], input[type="text"], select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         .radio-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .readonly-bg { background-color: #eeeeee; }
+        .readonly-bg { background-color: #eeeeee; cursor: not-allowed; }
         .required { color: red; }
+        
+        /* Style Tombol Salin */
+        .copy-btn {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .copy-btn:hover { background-color: #0056b3; }
+        .copy-btn:active { background-color: #004085; }
+        .input-wrapper { display: flex; gap: 5px; align-items: center; }
     </style>
 </head>
 <body>
@@ -29,7 +44,6 @@
                     <option value="lainnya">Lainnya</option>
                     <option value="motor">Motor</option>
                     <option value="mobil">Mobil</option>
-                    
                 </select>
             </td>
         </tr>
@@ -50,8 +64,9 @@
                     <label><input type="radio" name="bungaOpt" value="lainnya" id="radioBungaLain" onclick="toggleBungaLain(true)"> Lainnya:</label>
                     <input type="number" id="bungaPersenLain" style="width: 60px;" placeholder="%" oninput="hitungSemua()" disabled>
                 </div>
-                <div style="margin-top:5px;">
-                    Hasil: <input type="text" id="hasilBunga" class="readonly-bg" readonly>
+                <div class="input-wrapper" style="margin-top:5px;">
+                    <input type="text" id="hasilBunga" class="readonly-bg" readonly placeholder="Hasil Bunga">
+                    <button class="copy-btn" onclick="copyToClipboard('hasilBunga')">Copy</button>
                 </div>
             </td>
         </tr>
@@ -59,50 +74,55 @@
         <!-- Admin -->
         <tr>
             <td class="label">Admin</td>
-            <td><input type="text" id="admin" class="readonly-bg" readonly></td>
+            <td>
+                <div class="input-wrapper">
+                    <input type="text" id="admin" class="readonly-bg" readonly>
+                    <button class="copy-btn" onclick="copyToClipboard('admin')">Copy</button>
+                </div>
+            </td>
         </tr>
 
         <!-- Biaya Penyimpanan -->
         <tr>
             <td class="label">Biaya Penyimpanan</td>
-            <td><input type="text" id="biayaSimpan" class="readonly-bg" readonly></td>
-        </tr>
-
-        <!-- Tanggal Hari Ini -->
-        <tr>
-            <td class="label">Tanggal Hari Ini <span class="required">*</span></td>
-            <td><input type="text" id="tglHariIni" class="readonly-bg" readonly></td>
-        </tr>
-
-        <!-- Pilihan Jatuh Tempo -->
-        <tr>
-            <td class="label">Pilihan Jatuh Tempo <span class="required">*</span></td>
             <td>
-                <div class="radio-group">
-                    <label><input type="radio" name="tenor" value="1m" onclick="hitungSemua()" checked> 1 Bulan</label>
-                    <label><input type="radio" name="tenor" value="14d" onclick="hitungSemua()"> 2 Minggu/14 Hari</label>
+                <div class="input-wrapper">
+                    <input type="text" id="biayaSimpan" class="readonly-bg" readonly>
+                    <button class="copy-btn" onclick="copyToClipboard('biayaSimpan')">Copy</button>
                 </div>
             </td>
         </tr>
 
         <!-- Tanggal Jatuh Tempo -->
         <tr>
-            <td class="label">Tanggal Jatuh Tempo</td>
-            <td><input type="text" id="tglJatuhTempo" class="readonly-bg" readonly></td>
+            <td class="label">Jatuh Tempo</td>
+            <td>
+                <div class="radio-group" style="margin-bottom: 8px;">
+                    <label><input type="radio" name="tenor" value="1m" onclick="hitungSemua()" checked> 1 Bulan</label>
+                    <label><input type="radio" name="tenor" value="14d" onclick="hitungSemua()"> 14 Hari</label>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="tglJatuhTempo" class="readonly-bg" readonly>
+                    <button class="copy-btn" onclick="copyToClipboard('tglJatuhTempo')">Copy</button>
+                </div>
+            </td>
         </tr>
 
         <!-- Tanggal Lelang -->
         <tr>
             <td class="label">Tanggal Lelang</td>
-            <td><input type="text" id="tglLelang" class="readonly-bg" readonly></td>
+            <td>
+                <div class="input-wrapper">
+                    <input type="text" id="tglLelang" class="readonly-bg" readonly>
+                    <button class="copy-btn" onclick="copyToClipboard('tglLelang')">Copy</button>
+                </div>
+            </td>
         </tr>
     </table>
 </div>
 
 <script>
-    // Inisialisasi Tanggal Hari Ini
     const hariIni = new Date();
-    document.getElementById('tglHariIni').value = formatTanggal(hariIni);
 
     function formatTanggal(date) {
         let d = date.getDate().toString().padStart(2, '0');
@@ -116,13 +136,28 @@
         hitungSemua();
     }
 
+    // FUNGSI COPY BARU
+    function copyToClipboard(id) {
+        const input = document.getElementById(id);
+        const text = input.value;
+        
+        if (text === "" || text === "0") {
+            alert("Tidak ada nilai untuk disalin");
+            return;
+        }
+
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Tersalin: " + text);
+        }).catch(err => {
+            console.error('Gagal menyalin: ', err);
+        });
+    }
+
     function hitungSemua() {
-        // 1. Ambil Nilai Input
         let pencairan = parseFloat(document.getElementById('pencairan').value) || 0;
         let jenis = document.getElementById('jenisBarang').value;
         let tenor = document.querySelector('input[name="tenor"]:checked').value;
         
-        // 2. Hitung Bunga & Admin
         let bungaPersen = 0;
         let radioBunga = document.querySelector('input[name="bungaOpt"]:checked').value;
         
@@ -135,7 +170,6 @@
         let totalBunga = pencairan * bungaPersen;
         document.getElementById('hasilBunga').value = totalBunga.toLocaleString('id-ID');
 
-        // Logika Admin
         let biayaAdmin = 0;
         if (radioBunga === "0.05") {
             biayaAdmin = pencairan * 0.01;
@@ -144,31 +178,23 @@
         }
         document.getElementById('admin').value = biayaAdmin.toLocaleString('id-ID');
 
-        // 3. Biaya Penyimpanan
         let biayaSimpan = 0;
         if (jenis === "motor") {
             biayaSimpan = 100000;
         } else if (jenis === "mobil") {
-            if (tenor === "14d") {
-                biayaSimpan = 100000;
-            } else {
-                biayaSimpan = 200000;
-            }
+            biayaSimpan = (tenor === "14d") ? 100000 : 200000;
         }
         document.getElementById('biayaSimpan').value = biayaSimpan.toLocaleString('id-ID');
 
-        // 4. Hitung Tanggal Jatuh Tempo & Lelang
         let tglJT = new Date(hariIni);
         let tglLelang = new Date(hariIni);
 
         if (tenor === "1m") {
             tglJT.setMonth(tglJT.getMonth() + 1);
-            // Lelang 7 hari setelah JT
             tglLelang = new Date(tglJT);
             tglLelang.setDate(tglLelang.getDate() + 7);
         } else {
             tglJT.setDate(tglJT.getDate() + 14);
-            // Lelang 3 hari setelah JT
             tglLelang = new Date(tglJT);
             tglLelang.setDate(tglLelang.getDate() + 3);
         }
@@ -177,7 +203,6 @@
         document.getElementById('tglLelang').value = formatTanggal(tglLelang);
     }
 
-    // Jalankan hitung pertama kali
     hitungSemua();
 </script>
 
