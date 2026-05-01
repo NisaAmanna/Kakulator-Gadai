@@ -5,28 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Gadai</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #fdddea; }
-        .container { max-width: 600px; background: rgb(243, 200, 245); padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; }
-        td { padding: 10px; border-bottom: 1px solid #c5eeca; }
-        .label { font-weight: bold; width: 40%; }
-        input[type="number"], select { width: 100%; padding: 8px; box-sizing: border-box; }
-        .radio-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .readonly-bg { background-color: #f1dffd; }
+        /* Menggunakan Flexbox agar container berada di tengah layar secara vertikal & horizontal */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            background-color: #fdddea; 
+            display: flex;
+            justify-content: center; /* Tengah horizontal */
+            align-items: center;     /* Tengah vertikal */
+            min-height: 100vh;       /* Tinggi minimal selayar penuh */
+        }
+        .container { 
+            width: 100%;
+            max-width: 600px; 
+            background: rgb(243, 200, 245); 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #d147a3;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        td { 
+            padding: 12px 5px; 
+            border-bottom: 1px solid #eec5e6; 
+        }
+        .label { 
+            font-weight: bold; 
+            width: 40%; 
+            color: #555;
+        }
+        input[type="number"], 
+        input[type="text"],
+        select { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .radio-group { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            align-items: center; 
+            margin-bottom: 5px;
+        }
+        .readonly-bg { 
+            background-color: #f1dffd; 
+            border: 1px solid #d4b4e9 !important;
+        }
         .required { color: red; }
         .copy-btn {
-            padding: 8px 12px;
+            padding: 8px 15px;
             background-color: #f47eff;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 12px;
-            white-space: nowrap;
+            transition: 0.3s;
+            margin-top: 5px;
         }
         .copy-btn:hover { background-color: #c10ac7; }
-        .copy-btn:active { background-color: #c10ac7; }
-        .input-wrapper { display: flex; gap: 5px; align-items: center; }
+        /* Membuat baris input dan tombol lebih rapi */
+        .input-with-button {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
     </style>
 </head>
 <body >
