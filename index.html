@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Gadai</title>
     <style>
-        /* Menggunakan Flexbox agar container berada di tengah layar secara vertikal & horizontal */
         body { 
             font-family: Arial, sans-serif; 
             margin: 0; 
@@ -75,12 +74,28 @@
             margin-top: 5px;
         }
         .copy-btn:hover { background-color: #c10ac7; }
-        /* Membuat baris input dan tombol lebih rapi */
         .input-with-button {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
+
+        #Pelunasan {
+        font-weight: 800; 
+        font-size: 18px;
+        color: #b71c1c; 
+        border: 1px solid #a5d6a7;
+    }
+
+    #Perpanjangan {
+        font-weight: 800; 
+        font-size: 18px;
+        color: #0d47a1; 
+        border: 1px solid #81d4fa;
+    }
+
+    .row-highlight-pelunasan { background-color: #c8e6c9 !important; }
+    .row-highlight-perpanjangan { background-color: #b3e5fc !important; }
     </style>
 </head>
 <body >
@@ -102,9 +117,9 @@
         </tr>
 
         <!-- Pencairan -->
-        <tr>
+       <tr>
             <td class="label">Pencairan (Rp) <span class="required">*</span></td>
-            <td><input type="number" id="pencairan" placeholder="Masukkan angka" oninput="hitungSemua()"></td>
+            <td><input type="text" id="pencairan" placeholder="0" oninput="formatAndCalculate(this)"></td>
         </tr>
 
         <!-- Bunga -->
@@ -140,6 +155,28 @@
                 <button class="copy-btn" onclick="copyToClipboard('biayaSimpan')">Copy</button>
             </td>
            
+        </tr>
+        
+        <!-- Jenis Customer -->
+        <tr>
+            <td class="label">Jenis Customer <span class="required">*</span></td>
+            <td>
+                <div class="radio-group">
+                    <label><input type="radio" name="cust" value="RO" onclick="hitungSemua()" checked> Repeat Order (RO)</label>
+                    <label><input type="radio" name="cust" value="NC" onclick="hitungSemua()"> New Customer (NC)</label>
+                </div>
+            </td>
+        </tr>
+
+        <!-- Hasil Perhitungan Utama -->
+        <tr class="row-highlight-pelunasan" style="background-color: #bcf7c4;">
+            <td class="label">Pelunasan</td>
+            <td><input type="text" id="Pelunasan" class="readonly-bg"  readonly></td>
+        </tr>
+        
+        <tr class="row-highlight-perpanjangan" style="background-color: #a9ecf8;">
+            <td class="label">Perpanjangan</td>
+            <td><input type="text" id="Perpanjangan" class="readonly-bg"  readonly></td>
         </tr>
 
         <!-- Tanggal Hari Ini -->
@@ -179,6 +216,17 @@
 </div>
 
 <script>
+    function formatAndCalculate(input) {
+        let value = input.value.replace(/\D/g, "");
+        input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        hitungSemua();
+    }
+
+    function parseAngka(str) {
+        if (!str) return 0;
+        return parseFloat(str.replace(/\./g, "")) || 0;
+    }
+    
     const hariIni = new Date();
     document.getElementById('tglHariIni').value = formatTanggal(hariIni);
 
@@ -194,7 +242,6 @@
         hitungSemua();
     }
 
-    // FUNGSI COPY BARU
     function copyToClipboard(id) {
         const input = document.getElementById(id);
         const text = input.value;
@@ -211,44 +258,64 @@
         });
     }
 
-    function hitungSemua() {
-        let pencairan = parseFloat(document.getElementById('pencairan').value) || 0;
+     function hitungSemua() {
+        
+        let pencairan = parseAngka(document.getElementById('pencairan').value);
         let jenis = document.getElementById('jenisBarang').value;
         let tenor = document.querySelector('input[name="tenor"]:checked').value;
+        let jenisCust = document.querySelector('input[name="cust"]:checked').value;
+        
         
         let bungaPersen = 0;
-        let radioBunga = document.querySelector('input[name="bungaOpt"]:checked').value;
+        let radioBungaValue = document.querySelector('input[name="bungaOpt"]:checked').value;
         
-        if (radioBunga === "lainnya") {
-            bungaPersen = (parseFloat(document.getElementById('bungaPersenLain').value) || 0) / 100;
+        if (radioBungaValue === "lainnya") {
+            bungaPersen = (parseAngka(document.getElementById('bungaPersenLain').value)) / 100;
         } else {
-            bungaPersen = parseFloat(radioBunga);
+            bungaPersen = parseFloat(radioBungaValue);
         }
-
         let totalBunga = pencairan * bungaPersen;
         document.getElementById('hasilBunga').value = totalBunga.toLocaleString('id-ID');
 
+        
         let biayaAdmin = 0;
-        if (radioBunga === "0.05") {
+        if (radioBungaValue === "0.05") {
             biayaAdmin = pencairan * 0.01;
-        } else if (radioBunga === "0.10") {
+        } else if (radioBungaValue === "0.10") {
             biayaAdmin = pencairan * 0.02;
         }
         document.getElementById('admin').value = biayaAdmin.toLocaleString('id-ID');
 
+        
         let biayaSimpan = 0;
         if (jenis === "motor") {
             biayaSimpan = 100000;
         } else if (jenis === "mobil") {
             biayaSimpan = (tenor === "14d") ? 100000 : 200000;
+        } else {
+            biayaSimpan = 0;
         }
         document.getElementById('biayaSimpan').value = biayaSimpan.toLocaleString('id-ID');
 
+        
+        let valPelunasan = 0;
+        let valPerpanjangan = 0;
+
+        if (jenisCust === "RO") {
+            valPelunasan = pencairan + biayaAdmin + totalBunga + biayaSimpan;
+            valPerpanjangan = biayaAdmin + totalBunga + biayaSimpan;
+        } else {
+            valPelunasan = pencairan + totalBunga + biayaSimpan;
+            valPerpanjangan = totalBunga + biayaSimpan;
+        }
+
+        document.getElementById('Pelunasan').value = valPelunasan.toLocaleString('id-ID');
+        document.getElementById('Perpanjangan').value = valPerpanjangan.toLocaleString('id-ID');
         let tglJT = new Date(hariIni);
         let tglLelang = new Date(hariIni);
 
         if (tenor === "1m") {
-            tglJT.setMonth(tglJT.getMonth() + 1);
+             tglJT.setDate(tglJT.getDate() + 30)
             tglLelang = new Date(tglJT);
             tglLelang.setDate(tglLelang.getDate() + 7);
         } else {
@@ -260,6 +327,7 @@
         document.getElementById('tglJatuhTempo').value = formatTanggal(tglJT);
         document.getElementById('tglLelang').value = formatTanggal(tglLelang);
     }
+
 
     hitungSemua();
 </script>
