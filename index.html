@@ -122,6 +122,17 @@
             <td><input type="text" id="pencairan" placeholder="0" oninput="formatAndCalculate(this)"></td>
         </tr>
 
+         <!-- Jenis Customer -->
+        <tr>
+            <td class="label">Jenis Customer <span class="required">*</span></td>
+            <td>
+                <div class="radio-group">
+                    <label><input type="radio" name="cust" value="RO" onclick="hitungSemua()" checked> Repeat Order (RO)</label>
+                    <label><input type="radio" name="cust" value="NC" onclick="hitungSemua()"> New Customer (NC)</label>
+                </div>
+            </td>
+        </tr>
+
         <!-- Bunga -->
         <tr>
             <td class="label">Bunga <span class="required">*</span></td>
@@ -139,6 +150,7 @@
             </td>
         </tr>
 
+        
         <!-- Admin -->
         <tr>
             <td class="label">Admin</td>
@@ -157,16 +169,7 @@
            
         </tr>
         
-        <!-- Jenis Customer -->
-        <tr>
-            <td class="label">Jenis Customer <span class="required">*</span></td>
-            <td>
-                <div class="radio-group">
-                    <label><input type="radio" name="cust" value="RO" onclick="hitungSemua()" checked> Repeat Order (RO)</label>
-                    <label><input type="radio" name="cust" value="NC" onclick="hitungSemua()"> New Customer (NC)</label>
-                </div>
-            </td>
-        </tr>
+       
 
         <!-- Hasil Perhitungan Utama -->
         <tr class="row-highlight-pelunasan" style="background-color: #bcf7c4;">
@@ -279,12 +282,17 @@
 
         
         let biayaAdmin = 0;
+        if (jenisCust === "NC") {
+            biayaAdmin = 0; // Jika New Customer, admin otomatis 0
+        } else {
         if (radioBungaValue === "0.05") {
             biayaAdmin = pencairan * 0.01;
         } else if (radioBungaValue === "0.10") {
             biayaAdmin = pencairan * 0.02;
         }
+        }
         document.getElementById('admin').value = biayaAdmin.toLocaleString('id-ID');
+
 
         
         let biayaSimpan = 0;
